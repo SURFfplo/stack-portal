@@ -1,0 +1,57 @@
+version: "3.7"
+services:
+  nginx:
+    #image: nginx:0.1
+    image: 192.87.106.18:56001/nginx:0.1
+    labels: 
+      MY_DLO_ENVIRONMENT: development
+      MY_DLO_PURPOSE: an portal service
+    ports:
+      # platform:56000+, dev:57000+, demo:58000+, pilot:59000+
+      - 57202:80
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      #- $PWD/conf:/etc/nginx/conf.d
+      #- $PWD/html:/usr/share/nginx/html
+      #- $PWD/src/$STACK_SERVICE:/var/$STACK_SERVICE
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE-$STACK_VERSION/conf:/etc/nginx/conf.d
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE-$STACK_VERSION/html:/usr/share/nginx/html
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE-$STACK_VERSION/src/$STACK_SERVICE:/var/$STACK_SERVICE
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/conf:/etc/nginx/conf.d
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/html:/usr/share/nginx/html
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/var/$STACK_SERVICE
+  php:
+    #image: php-fpm:0.1
+    image: 192.87.106.18:56001/php-fpm:0.1
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      #- $PWD/src/$STACK_SERVICE:/var/$STACK_SERVICE
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/var/$STACK_SERVICE
+  composer:
+    #image: composer:0.1
+    image: 192.87.106.18:56001/composer:0.1
+    command: install
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      #- $PWD/src/$STACK_SERVICE:/app
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/app
+
+networks:
+  #$STACK_NETWORK:
+  dev-net:
+    external: true
