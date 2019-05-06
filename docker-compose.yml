@@ -1,5 +1,6 @@
 version: "3.7"
 services:
+
   nginx:
     #image: nginx:0.1
     image: 192.87.106.18:56001/nginx:0.1
@@ -25,6 +26,7 @@ services:
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/conf:/etc/nginx/conf.d
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/html:/usr/share/nginx/html
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/var/$STACK_SERVICE
+
   php:
     #image: php-fpm:0.1
     image: 192.87.106.18:56001/php-fpm:0.1
@@ -32,11 +34,20 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    secrets:
+      - portal_db_dba_password
+    environment:
+      DB_HOST: 'db'
+      DB_USER: 'dba'
+      DB_NAME: 'portal'
+      DB_PASS_FILE: /run/secrets/portal_db_dba_password
+      DB_PORT: 3308
     networks:
       - $STACK_NETWORK
     volumes:
       #- $PWD/src/$STACK_SERVICE:/var/$STACK_SERVICE
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/var/$STACK_SERVICE
+
   composer:
     #image: composer:0.1
     image: 192.87.106.18:56001/composer:0.1
@@ -51,7 +62,50 @@ services:
       #- $PWD/src/$STACK_SERVICE:/app
       - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/app
 
+  db:
+    #image: mysql:5.7
+    image: 192.87.106.18:56001/mysql:0.1
+    configs:
+      - source: portal_my_cnf
+        target: /etc/mysql/conf.d/my.cnf
+    secrets:
+      - portal_db_root_password
+      - portal_db_dba_password
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        reservations:
+          memory: 128M
+        limits:
+          memory: 256M
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_USER: dba
+      MYSQL_DATABASE: portal
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/portal_db_root_password
+      MYSQL_PASSWORD_FILE: /run/secrets/portal_db_dba_password
+    networks:
+      - dev-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      #- .data/mysql:/var/lib/mysql
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/data/mysql:/var/lib/mysql
+
 networks:
   #$STACK_NETWORK:
   dev-net:
     external: true
+
+secrets:
+  portal_db_root_password:
+    external: true
+  portal_db_dba_password:
+    external: true
+
+configs:
+  portal_my_cnf:
+    external: true
+
