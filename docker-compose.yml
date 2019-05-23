@@ -34,6 +34,8 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    ports:
+      - 9003:9000
     secrets:
       - portal_db_dba_password
     environment:
