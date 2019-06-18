@@ -9,7 +9,7 @@ services:
       MY_DLO_PURPOSE: an portal service
     ports:
       # platform:56000+, dev:57000+, demo:58000+, pilot:59000+
-      - 57202:80
+      - $STACK_PORT:80
     deploy:
       replicas: 1
       restart_policy:
@@ -20,12 +20,9 @@ services:
       #- $PWD/conf:/etc/nginx/conf.d
       #- $PWD/html:/usr/share/nginx/html
       #- $PWD/src/$STACK_SERVICE:/var/$STACK_SERVICE
-      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE-$STACK_VERSION/conf:/etc/nginx/conf.d
-      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE-$STACK_VERSION/html:/usr/share/nginx/html
-      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE-$STACK_VERSION/src/$STACK_SERVICE:/var/$STACK_SERVICE
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/conf:/etc/nginx/conf.d
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/html:/usr/share/nginx/html
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/var/$STACK_SERVICE
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/conf:/etc/nginx/conf.d
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/html:/usr/share/nginx/html
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/src/$STACK_SERVICE:/var/$STACK_SERVICE
 
   php:
     #image: php-fpm:0.1
@@ -34,23 +31,21 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-    ports:
-      - 9003:9000
     secrets:
       - portal_db_dba_password
     environment:
       # app
       APP_ENV: "dev"
       APP_SECRET: "d0e0b906b0b783794908ed04e2a16cbf"
-      PORTAL_URL: "http://www.dlo.surfnet.nl"
+      PORTAL_URL: $STACK_NETWORK_URL_PORTAL
       # saml
-      BASE_URL: "http://portaal.dlo.surfnet.nl/"
-      ENTITY_ID: "http://idp.dlo.surfnet.nl/saml2/idp/metadata.php"
-      SINGLE_SIGN_ON_SERVICE: "http://idp.dlo.surfnet.nl/saml2/idp/SSOService.php"
-      SINGLE_LOGOUT_SERVICE: "http://idp.dlo.surfnet.nl/saml2/idp/SingleLogoutService.php"
-      ENTITY_ID_SP: "http://portaal.dlo.surfnet.nl/saml/metadata"
-      ASSERTION_CONSUMER_SERVICE_SP: "http://portaal.dlo.surfnet.nl/saml/acs"
-      SINGLE_LOGOUT_SERVICE_SP: "http://portaal.dlo.surfnet.nl/saml/logout"
+      BASE_URL: $STACK_NETWORK_URL
+      ENTITY_ID: ${STACK_NETWORK_URL_IDP}/saml2/idp/metadata.php
+      SINGLE_SIGN_ON_SERVICE: ${STACK_NETWORK_URL_IDP}/saml2/idp/SSOService.php
+      SINGLE_LOGOUT_SERVICE: ${STACK_NETWORK_URL_IDP}/saml2/idp/SingleLogoutService.php
+      ENTITY_ID_SP: ${STACK_NETWORK_URL}/saml/metadata"
+      ASSERTION_CONSUMER_SERVICE_SP: ${STACK_NETWORK_URL}/saml/acs
+      SINGLE_LOGOUT_SERVICE_SP: ${STACK_NETWORK_URL}/saml/logout
       IDP_CERT: "00:B8:D9:22:1D:50:BE:DB:4D:1F:6E:B2:4B:66:59:BB:3B:D1:87:39"
       # attributes
       UID: "uid"
@@ -60,16 +55,17 @@ services:
       #EPPN: "eduPersonPrincipalName"
       EPPN: "uid"
       # database
-      DB_HOST: '192.87.106.21'
+      DB_HOST: ${STACK_SERVICE}_db
       DB_USER: 'dba'
       DB_NAME: 'portal'
       DB_PASS_FILE: /run/secrets/portal_db_dba_password
-      DB_PORT: 3308
+      DB_PORT: 3306
     networks:
       - $STACK_NETWORK
     volumes:
       #- $PWD/src/$STACK_SERVICE:/var/$STACK_SERVICE
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/var/$STACK_SERVICE
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/src/$STACK_SERVICE:/var/$STACK_SERVICE
+      - $PWD/startup1.sh:/startup.sh
 
   composer:
     #image: composer:0.1
@@ -83,7 +79,7 @@ services:
       - $STACK_NETWORK
     volumes:
       #- $PWD/src/$STACK_SERVICE:/app
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/src/$STACK_SERVICE:/app
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/src/$STACK_SERVICE:/app
 
   db:
     #image: mysql:5.7
@@ -103,23 +99,40 @@ services:
           memory: 128M
         limits:
           memory: 256M
-    ports:
-      - 3308:3306
     environment:
       MYSQL_USER: dba
       MYSQL_DATABASE: portal
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/portal_db_root_password
       MYSQL_PASSWORD_FILE: /run/secrets/portal_db_dba_password
     networks:
-      - dev-net
+      - $STACK_NETWORK
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       #- .data/mysql:/var/lib/mysql
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/portal-0.1/data/mysql:/var/lib/mysql
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data/mysql:/var/lib/mysql
+
+  startup:
+    #image: alpine:0.1
+    image: 192.87.106.18:56001/alpine:0.1
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+    environment:
+      PHP_STACK_SERVICE: $STACK_SERVICE
+    networks:
+      - $STACK_NETWORK
+    volumes:
+      #- $PWD/src/$STACK_SERVICE:/app
+      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION:/data
+      - $PWD/startup2.sh:/startup.sh
 
 networks:
-  #$STACK_NETWORK:
   dev-net:
+    external: true
+  test-net:
+    external: true
+  exp-net:
     external: true
 
 secrets:
