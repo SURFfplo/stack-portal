@@ -20,5 +20,5 @@ cd ..
 # config
 
 # status
-cp html/status.php src/portal/public
+cp html/status.php src/$STACK_SERVICE/public
 
