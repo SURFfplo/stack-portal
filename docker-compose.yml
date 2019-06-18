@@ -60,6 +60,8 @@ services:
       DB_NAME: 'portal'
       DB_PASS_FILE: /run/secrets/portal_db_dba_password
       DB_PORT: 3306
+      # startup
+      PHP_STACK_SERVICE: $STACK_SERVICE
     networks:
       - $STACK_NETWORK
     volumes:

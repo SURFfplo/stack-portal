@@ -6,7 +6,7 @@ sleep 15
 set -e
 
 # create doctrine schema
-cd /var/account
+cd /var/$PHP_STACK_SERVICE
 bin/console doctrine:schema:create
 
 exec "$@"
