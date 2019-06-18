@@ -43,7 +43,7 @@ services:
       ENTITY_ID: ${STACK_NETWORK_URL_IDP}/saml2/idp/metadata.php
       SINGLE_SIGN_ON_SERVICE: ${STACK_NETWORK_URL_IDP}/saml2/idp/SSOService.php
       SINGLE_LOGOUT_SERVICE: ${STACK_NETWORK_URL_IDP}/saml2/idp/SingleLogoutService.php
-      ENTITY_ID_SP: ${STACK_NETWORK_URL}/saml/metadata"
+      ENTITY_ID_SP: ${STACK_NETWORK_URL}/saml/metadata
       ASSERTION_CONSUMER_SERVICE_SP: ${STACK_NETWORK_URL}/saml/acs
       SINGLE_LOGOUT_SERVICE_SP: ${STACK_NETWORK_URL}/saml/logout
       IDP_CERT: "00:B8:D9:22:1D:50:BE:DB:4D:1F:6E:B2:4B:66:59:BB:3B:D1:87:39"
