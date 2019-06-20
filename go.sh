@@ -29,17 +29,14 @@ export STACK_PORT=$PORT
 if [ $NETWORK == "dev-net" ]; then
         export STACK_NETWORK_URL=https://portaal.dev.dlo.surf.nl
         export STACK_NETWORK_URL_IDP=https://idp.dev.dlo.surf.nl
-        export STACK_NETWORK_URL_PORTAL=https://www.dev.dlo.surf.nl
 fi
 if [ $NETWORK == "test-net" ]; then
         export STACK_NETWORK_URL=https://portaal.test.dlo.surf.nl
         export STACK_NETWORK_URL_IDP=https://idp.test.dlo.surf.nl
-        export STACK_NETWORK_URL_PORTAL=https://www.test.dlo.surf.nl
 fi
 if [ $NETWORK == "exp-net" ]; then
         export STACK_NETWORK_URL=https://portaal.experimenteer.dlo.surf.nl
         export STACK_NETWORK_URL_IDP=https://idp.experimenteer.dlo.surf.nl
-        export STACK_NETWORK_URL_PORTAL=https://www.experimenteer.dlo.surf.nl
 fi
 
 # source
