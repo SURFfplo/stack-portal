@@ -35,7 +35,7 @@ services:
       - portal_db_dba_password
     environment:
       # app
-      APP_ENV: "dev"
+      APP_ENV: ${STACK_ENV_MOD}
       APP_SECRET: "d0e0b906b0b783794908ed04e2a16cbf"
       # saml
       BASE_URL: $STACK_NETWORK_URL
