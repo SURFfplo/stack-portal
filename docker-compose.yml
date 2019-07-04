@@ -45,7 +45,7 @@ services:
       ENTITY_ID_SP: ${STACK_NETWORK_URL}/saml/metadata
       ASSERTION_CONSUMER_SERVICE_SP: ${STACK_NETWORK_URL}/saml/acs
       SINGLE_LOGOUT_SERVICE_SP: ${STACK_NETWORK_URL}/saml/logout
-      IDP_CERT: "D9:BD:30:11:E7:1D:12:FA:92:E9:3F:95:D6:C4:24:B5:CD:D3:6F:AF"
+      IDP_CERT: ${STACK_NETWORK_IDP_FINGERPRINT}
       # attributes
       # - get uid from saml response
       # database
