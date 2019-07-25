@@ -103,17 +103,19 @@ services:
     secrets:
       - portal_db_root_password
       - portal_db_dba_password
-#    deploy:
-#      mode: replicated
-#      replicas: 1
-#      resources:
-#        limits:
-#          cpus: '1.0'
-#          memory: 512M
-#      restart_policy:
-#        condition: any
-#      placement:
-#        constraints: [node.role == manager]
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+      restart_policy:
+        condition: any
+        delay: 60s
+      placement:
+        constraints:
+          - node.labels.database == true
     environment:
       MYSQL_USER: dba
       MYSQL_DATABASE: portal
@@ -124,7 +126,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       #- .data/mysql:/var/lib/mysql
-      - /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data/mysql:/var/lib/mysql
+      #- /mnt/nfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data/mysql:/var/lib/mysql
+      - /var/nonfs/nfsdlo/$STACK_NETWORK/$STACK_SERVICE/$STACK_VERSION/data/mysql:/var/lib/mysql
 
   startup:
     #image: alpine:0.1
