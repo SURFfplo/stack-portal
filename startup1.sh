@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # wait until the rest is finished
-sleep 15
+sleep 120
 
 set -e
 
