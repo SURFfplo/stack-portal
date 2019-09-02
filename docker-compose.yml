@@ -47,6 +47,7 @@ services:
       # app
       APP_ENV: ${STACK_ENV_MOD}
       APP_SECRET: "d0e0b906b0b783794908ed04e2a16cbf"
+      API_URL: $STACK_NETWORK_URL_API
       # saml
       BASE_URL: $STACK_NETWORK_URL
       ENTITY_ID: ${STACK_NETWORK_URL_IDP}/saml2/idp/metadata.php
