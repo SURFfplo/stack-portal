@@ -51,6 +51,7 @@ services:
       JWT_URL: $STACK_NETWORK_URL_JWT
       # saml
       BASE_URL: $STACK_NETWORK_URL
+      SAML_BASEURL: ${STACK_NETWORK_URL}/saml
       ENTITY_ID: ${STACK_NETWORK_URL_IDP}/saml2/idp/metadata.php
       SINGLE_SIGN_ON_SERVICE: ${STACK_NETWORK_URL_IDP}/saml2/idp/SSOService.php
       SINGLE_LOGOUT_SERVICE: ${STACK_NETWORK_URL_IDP}/saml2/idp/SingleLogoutService.php
