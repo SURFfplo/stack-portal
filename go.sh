@@ -30,6 +30,7 @@ if [ $NETWORK == "dev-net" ]; then
         export STACK_NETWORK_URL=https://portaal.dev.dlo.surf.nl
         export STACK_NETWORK_URL_IDP=https://idp.dev.dlo.surf.nl
         export STACK_NETWORK_URL_API=https://api.dev.dlo.surf.nl
+        export STACK_NETWORK_URL_JWT=http://192.87.106.21:57298
         export STACK_NETWORK_IDP_FINGERPRINT=D9:BD:30:11:E7:1D:12:FA:92:E9:3F:95:D6:C4:24:B5:CD:D3:6F:AF
 	export STACK_ENV_MOD=dev
 fi
@@ -37,6 +38,7 @@ if [ $NETWORK == "test-net" ]; then
         export STACK_NETWORK_URL=https://portaal.test.dlo.surf.nl
         export STACK_NETWORK_URL_IDP=https://idp.test.dlo.surf.nl
         export STACK_NETWORK_URL_API=https://api.test.dlo.surf.nl
+        export STACK_NETWORK_URL_JWT=http://192.87.106.21:58298
         export STACK_NETWORK_IDP_FINGERPRINT=54:14:99:9B:9F:91:BE:DE:BA:0E:00:87:4A:88:35:49:68:F9:D9:82
 	export STACK_ENV_MOD=prod
 fi
@@ -44,6 +46,7 @@ if [ $NETWORK == "exp-net" ]; then
         export STACK_NETWORK_URL=https://portaal.experimenteer.dlo.surf.nl
         export STACK_NETWORK_URL_IDP=https://idp.experimenteer.dlo.surf.nl
         export STACK_NETWORK_URL_API=https://api.experimenteer.dlo.surf.nl
+        export STACK_NETWORK_URL_JWT=http://192.87.106.21:59298
         export STACK_NETWORK_IDP_FINGERPRINT=D5:42:1D:BB:9F:CE:2F:2E:F7:B5:06:A1:D3:DA:A9:48:D9:3F:21:0B
 	export STACK_ENV_MOD=prod
 fi
